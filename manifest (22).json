@@ -1,0 +1,26 @@
+{
+  "name": "Balasan Campus App",
+  "short_name": "Balasan Campus",
+  "description": "Balasan National High School campus app for students, parents, and teachers \u2014 attendance, grades, announcements, classroom fees, and more.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f3ea",
+  "theme_color": "#4a7d2f",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

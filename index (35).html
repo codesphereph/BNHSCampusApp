@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Balasan Campus App</title>
+
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Balasan Campus App">
+  <meta name="application-name" content="Balasan Campus App">
+  <meta name="theme-color" content="#4a7d2f">
+  <meta name="description" content="Balasan National High School campus app \u2014 attendance, grades, announcements, classroom fees, and more.">
+  <meta name="msapplication-TileImage" content="icon-192.png">
+  <meta name="msapplication-TileColor" content="#4a7d2f">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta property="og:title"       content="Balasan Campus App">
+  <meta property="og:description" content="Balasan National High School campus app \u2014 attendance, grades, announcements, and classroom fees.">
+  <meta property="og:type"        content="website">
+  <meta property="og:image"       content="icon-512.png">
+  <meta name="twitter:card"       content="summary">
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#f7f3ea; width:100vw; height:100vh; overflow:hidden;
+           font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+
+    /* SPLASH */
+    #splash { position:fixed; inset:0;
+      background:radial-gradient(ellipse at center, #ffffff 0%, #f7f3ea 55%, #e9e2cf 100%);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      z-index:999; transition:opacity .6s ease; padding:24px; }
+
+    .logo-wrap { position:relative; width:150px; height:150px; display:flex; align-items:center; justify-content:center; }
+    .logo-core { width:132px; height:132px; border-radius:30px; object-fit:cover; background:#fff;
+      box-shadow:0 14px 40px rgba(53,80,28,0.28);
+      animation:pop .6s cubic-bezier(.2,.9,.3,1.4) both, breathe 2.4s ease-in-out .6s infinite; }
+    @keyframes pop { from{ opacity:0; transform:scale(.7) } to{ opacity:1; transform:scale(1) } }
+    @keyframes breathe { 0%,100%{ transform:scale(1) } 50%{ transform:scale(1.06) } }
+    .core-fallback { width:132px; height:132px; border-radius:30px; display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg,#7fae5f,#4a7d2f); box-shadow:0 14px 40px rgba(53,80,28,0.28);
+      animation:breathe 2.4s ease-in-out infinite; }
+    .core-fallback svg { width:60px; height:60px; stroke:#fff; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+
+    #splash .app-name { margin-top:26px; font-weight:800; font-size:26px; letter-spacing:.2px; color:#4a7d2f; text-align:center;
+      animation:rise .6s ease .15s both; }
+    #splash .app-sub { color:#7a7257; font-size:11px; font-weight:700; margin-top:8px; letter-spacing:2px; text-transform:uppercase; text-align:center;
+      animation:rise .6s ease .3s both; }
+    @keyframes rise { from{ opacity:0; transform:translateY(10px) } to{ opacity:1; transform:translateY(0) } }
+
+    /* warm sliding loader */
+    #loadbarWrap { margin-top:32px; width:184px; height:7px; border-radius:7px; background:#e3dcc6; overflow:hidden; }
+    #loadbarWrap i { display:block; height:100%; width:40%; border-radius:7px;
+      background:linear-gradient(90deg,#4a7d2f,#e0a23f); animation:slide 1.2s ease-in-out infinite; }
+    @keyframes slide { 0%{ transform:translateX(-110%) } 100%{ transform:translateX(320%) } }
+
+    #openBtn { display:none; margin-top:26px; background:#4a7d2f; color:#fff; border:none; border-radius:100px;
+      padding:13px 26px; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 6px 0 #35601f; text-decoration:none; }
+    #splash .hint { display:none; color:rgba(53,80,28,0.55); font-size:11px; margin-top:12px; }
+    #setupMsg { display:none; color:#4a5a38; max-width:360px; text-align:center; margin-top:24px; line-height:1.65; font-size:13px; }
+    #setupMsg b{ color:#4a7d2f } #setupMsg code{ background:rgba(53,80,28,0.1); padding:2px 6px; border-radius:5px; font-size:11px; word-break:break-all; }
+
+    #app-frame { position:fixed; inset:0; width:100%; height:100%; border:none; z-index:1; background:#f7f3ea; }
+
+    #installBanner { display:none; position:fixed; bottom:20px; left:12px; right:12px; z-index:998;
+      background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(53,80,28,0.2); border:1.5px solid #ded6bf; padding:14px 16px; align-items:center; gap:12px; }
+    #installBanner img { width:44px; height:44px; border-radius:12px; flex-shrink:0; }
+    #installBanner .ib-text { flex:1; min-width:0; }
+    #installBanner .ib-title { font-weight:800; font-size:14px; color:#3f4a30; }
+    #installBanner .ib-sub { font-size:12px; color:#7a7257; margin-top:2px; }
+    #installBanner .ib-install { background:#4a7d2f; color:#fff; border:none; border-radius:10px; padding:9px 16px; font-size:12px; font-weight:800; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+    #installBanner .ib-close { background:none; border:none; color:#7a7257; font-size:20px; cursor:pointer; padding:4px; flex-shrink:0; line-height:1; }
+  </style>
+</head>
+<body>
+
+  <!-- ===============================================================
+       SET YOUR APP URL HERE
+       Paste the Balasan Campus App deployed Apps Script Web App URL
+       (must end in /exec). In Apps Script:
+       Deploy > New deployment > Web app > Who has access: "Anyone" > copy URL.
+       =============================================================== -->
+  <script>
+    var APP_URL = "https://script.google.com/macros/s/AKfycbwLstDR3k247zXz1k9sVxtsausHVnpn02RxpoPzS5crPPX36a2Kmzbyi5Zcl1w8SPdB/exec";
+  </script>
+
+  <div id="splash">
+    <div class="logo-wrap">
+      <img class="logo-core" src="icon-192.png" alt="Balasan Campus App"
+           onerror="this.style.display='none'; document.getElementById('core-fallback').style.display='flex';">
+      <div class="core-fallback" id="core-fallback" style="display:none;">
+        <svg viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><path d="M22 10v6"/></svg>
+      </div>
+    </div>
+    <div class="app-name">Balasan Campus App</div>
+    <div class="app-sub">Balasan National High School</div>
+
+    <div id="loadbarWrap"><i></i></div>
+
+    <a id="openBtn" href="#" target="_blank" rel="noopener">Open the App  &rarr;</a>
+    <div class="hint" id="openHint">Taking a while? Tap the button above.</div>
+
+    <div id="setupMsg">
+      <b>Almost there!</b><br>
+      Open <code>index.html</code> and replace the placeholder <code>APP_URL</code>
+      with your Apps Script Web App URL ending in <code>/exec</code>, then re-upload to GitHub.
+    </div>
+  </div>
+
+  <iframe id="app-frame" allow="fullscreen; clipboard-write; camera; microphone" allowfullscreen></iframe>
+
+  <div id="installBanner">
+    <img src="icon-192.png" alt="Balasan Campus App">
+    <div class="ib-text">
+      <div class="ib-title">Add to Home Screen</div>
+      <div class="ib-sub">Install Balasan Campus App for quick access</div>
+    </div>
+    <button class="ib-install" onclick="triggerInstall()">Install</button>
+    <button class="ib-close"   onclick="dismissInstall()">&#10005;</button>
+  </div>
+
+  <script>
+    var splash=document.getElementById('splash'), frame=document.getElementById('app-frame'),
+        openBtn=document.getElementById('openBtn'), openHint=document.getElementById('openHint'),
+        setupMsg=document.getElementById('setupMsg');
+    var notConfigured = APP_URL.indexOf('REPLACE_WITH_YOUR_WEB_APP_ID') !== -1 || APP_URL.trim() === '';
+    function hideSplash(){ splash.style.opacity='0'; setTimeout(function(){ splash.style.display='none'; },600); }
+
+    if (notConfigured) {
+      document.getElementById('loadbarWrap').style.display='none';
+      setupMsg.style.display='block';
+    } else {
+      frame.src = APP_URL; openBtn.href = APP_URL;
+      frame.onload = function(){ setTimeout(hideSplash, 800); };
+      setTimeout(hideSplash, 6000);
+      setTimeout(function(){ openBtn.style.display='inline-block'; openHint.style.display='block'; }, 4500);
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(e){console.warn('SW failed',e);}); });
+    }
+    var deferredPrompt;
+    window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferredPrompt=e; document.getElementById('installBanner').style.display='flex'; });
+    window.addEventListener('appinstalled', function(){ document.getElementById('installBanner').style.display='none'; deferredPrompt=null; });
+    function triggerInstall(){ if(!deferredPrompt) return; deferredPrompt.prompt(); deferredPrompt.userChoice.then(function(){ deferredPrompt=null; }); }
+    function dismissInstall(){ document.getElementById('installBanner').style.display='none'; }
+  </script>
+</body>
+</html>
